@@ -15,20 +15,13 @@ class EditView(QWidget):
         self.pages = QListWidget()
     
         self.pages.setViewMode(QListView.ViewMode.ListMode)
-        
-        # 2. Make the list flow horizontally instead of vertically
         self.pages.setFlow(QListView.Flow.LeftToRight)
-        
-        # 3. Tell it to wrap to a new row when it hits the edge of the window
         self.pages.setWrapping(True)
         self.pages.setResizeMode(QListView.ResizeMode.Adjust)
-
         self.pages.setIconSize(QSize(225, 300))
-        self.pages.setSpacing(15)
-        
-        # Pro-tip: Enforce a strict grid size so longer text labels don't ruin the alignment
+        self.pages.setSpacing(15)        
         self.pages.setGridSize(QSize(245, 330))
-        
+
         self.pages.setDragEnabled(True)
         self.pages.setAcceptDrops(True)
         self.pages.setDropIndicatorShown(True)
