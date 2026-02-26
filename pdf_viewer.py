@@ -1,4 +1,4 @@
-import sys
+
 from PySide6.QtWidgets import (QMainWindow, QApplication, QWidget, QPushButton, 
                                QVBoxLayout, QListWidget, QFileDialog, QLabel, QLineEdit)
 from PySide6.QtPdf import (QPdfDocument)
@@ -19,5 +19,7 @@ class PDFViewerWindow(QMainWindow):
 
         self.view = QPdfView(self)
         self.view.setDocument(self.document)
+        self.view.setPageMode(QPdfView.PageMode.MultiPage)
+        self.view.setZoomMode(QPdfView.ZoomMode.FitToWidth)
 
         layout.addWidget(self.view)

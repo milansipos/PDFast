@@ -30,6 +30,7 @@ class EditView(QWidget):
 
             item = QListWidgetItem(icon, f"Page {i+1}")
             self.pages.addItem(item)
+            
 
         
 

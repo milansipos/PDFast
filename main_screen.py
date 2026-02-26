@@ -3,6 +3,7 @@ from PySide6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QListWidget, Q
 from pdf_viewer import PDFViewerWindow
 from item_view import ItemView
 from edit_view import EditView
+from PySide6.QtCore import Qt
 
 class MainScreen(QWidget):
     def __init__(self):
@@ -25,6 +26,7 @@ class MainScreen(QWidget):
     def open_file_dialog(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open PDF", "", "PDF Files (*.pdf)")
         list_item = QListWidgetItem()
+        list_item.setData(Qt.ItemDataRole.UserRole, file_name)
         self.pdf_list.addItem(list_item)
         custom_item = ItemView(file_name)
         list_item.setSizeHint(custom_item.sizeHint())
@@ -38,7 +40,7 @@ class MainScreen(QWidget):
         edit_window.show()
 
     def open_pdf_viewer(self, item):
-        pdf_name = item.text()
+        pdf_name = item.data(Qt.ItemDataRole.UserRole)
         view_window = PDFViewerWindow(pdf_name)
         self.open_pdfs.append(view_window)
         view_window.show()

@@ -8,6 +8,8 @@ class ItemView(QWidget):
     def __init__(self, pdf_path:str):
         super().__init__()
         
+        self.pdf_path = pdf_path
+
         layout = QHBoxLayout(self)
         layout.setContentsMargins(15,5,15,5)
 
