@@ -71,6 +71,9 @@ class EditView(QWidget):
         print("asd")
         savepath, _ = QFileDialog.getSaveFileName(self, "Save Rearranged PDF", "", "PDF Files (*.pdf)")
 
+        if not savepath:
+            return
+
         reader = PdfReader(self.pdf_path)
         writer = PdfWriter()
 

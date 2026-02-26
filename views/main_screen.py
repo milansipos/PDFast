@@ -4,6 +4,7 @@ from views.pdf_viewer import PDFViewerWindow
 from views.item_view import ItemView
 from views.edit_view import EditView
 from PySide6.QtCore import Qt
+from views.merge_view import MergeView
 
 class MainScreen(QWidget):
     def __init__(self):
@@ -15,13 +16,16 @@ class MainScreen(QWidget):
 
         self.pdf_list = QListWidget()
         self.load_button = QPushButton("Select PDF File")
+        self.merge_button = QPushButton("Merge PDFs")
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.pdf_list)
+        layout.addWidget(self.merge_button)
         layout.addWidget(self.load_button)
 
         self.load_button.clicked.connect(self.open_file_dialog)
         self.pdf_list.itemDoubleClicked.connect(self.open_pdf_viewer)
+        self.merge_button.clicked.connect(self.open_pdf_merger)
     
     def open_file_dialog(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open PDF", "", "PDF Files (*.pdf)")
@@ -42,5 +46,10 @@ class MainScreen(QWidget):
     def open_pdf_viewer(self, item):
         pdf_name = item.data(Qt.ItemDataRole.UserRole)
         view_window = PDFViewerWindow(pdf_name)
+        self.open_pdfs.append(view_window)
+        view_window.show()
+
+    def open_pdf_merger(self):
+        view_window = MergeView()
         self.open_pdfs.append(view_window)
         view_window.show()
