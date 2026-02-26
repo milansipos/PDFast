@@ -1,7 +1,8 @@
 
 from PySide6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QListWidget, QListWidgetItem, QFileDialog, QLabel, QLineEdit)
 from pdf_viewer import PDFViewerWindow
-from pdf_item_view import ItemView
+from item_view import ItemView
+from edit_view import EditView
 
 class MainScreen(QWidget):
     def __init__(self):
@@ -35,6 +36,13 @@ class MainScreen(QWidget):
         custom_item = ItemView(file_name)
         list_item.setSizeHint(custom_item.sizeHint())
         self.pdf_list.setItemWidget(list_item, custom_item)
+
+        custom_item.edit_button.clicked.connect(lambda checked=False, fn=file_name: self.open_pdf_editor(fn)) # hell nah argument passing
+
+    def open_pdf_editor(self, pdf_name):
+        edit_window = EditView(pdf_name)
+        self.open_pdfs.append(edit_window)
+        edit_window.show()
 
     def open_pdf_viewer(self, item):
         pdf_name = item.text()

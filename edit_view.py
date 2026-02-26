@@ -1,46 +1,36 @@
 
-from PySide6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QListWidget, QListWidgetItem, QFileDialog, QLabel, QLineEdit)
-from pdf_viewer import PDFViewerWindow
-from pdf_item_view import ItemView
+from PySide6.QtWidgets import (QWidget, QPushButton, QListView, QVBoxLayout, QListWidget, QListWidgetItem, QFileDialog, QLabel, QLineEdit)
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QIcon, QPixmap
+from PySide6.QtPdf import QPdfDocument
 
 class EditView(QWidget):
-    def __init__(self):
+    def __init__(self, pdf_path):
         super().__init__()
 
-        self.open_pdfs = []
+        self.setWindowTitle("Edit PDF")
+        self.resize(1200, 1050)
 
-        self.setWindowTitle("PDF Tool Prototype")
-        self.resize(600, 450)
-
-        self.pdf_list = QListWidget()
-        self.load_button = QPushButton("Select PDF File")
-        self.label = QLabel()
-        self.label.setText("asd")
-        self.edit = QLineEdit()
-        self.edit.editingFinished.connect(self.textchange)
+        self.pages = QListWidget()
+        self.pages.setViewMode(QListView.ViewMode.IconMode)
+        self.pages.setResizeMode(QListView.ResizeMode.Adjust)
+        self.pages.setIconSize(QSize(150, 200))
+        self.pages.setSpacing(10)
 
         layout = QVBoxLayout(self)
-        layout.addWidget(self.pdf_list)
-        layout.addWidget(self.load_button)
-        layout.addWidget(self.label)
-        layout.addWidget(self.edit)
+        layout.addWidget(self.pages)
 
-        self.load_button.clicked.connect(self.open_file_dialog)
-        self.pdf_list.itemDoubleClicked.connect(self.open_pdf_viewer)
-    
-    def open_file_dialog(self):
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open PDF", "", "PDF Files (*.pdf)")
-        list_item = QListWidgetItem()
-        self.pdf_list.addItem(list_item)
-        custom_item = ItemView(file_name)
-        list_item.setSizeHint(custom_item.sizeHint())
-        self.pdf_list.setItemWidget(list_item, custom_item)
+        self.document = QPdfDocument()
+        self.document.load(pdf_path)
 
-    def open_pdf_viewer(self, item):
-        pdf_name = item.text()
-        view_window = PDFViewerWindow(pdf_name)
-        self.open_pdfs.append(view_window)
-        view_window.show()
+        for i in range(self.document.pageCount()):
+            image = self.document.render(i, QSize(150, 200))
+            pixmap = QPixmap.fromImage(image)
+            icon = QIcon(pixmap)
 
-    def textchange(self):
-        print("text was changed")
+            item = QListWidgetItem(icon, f"Page {i+1}")
+            self.pages.addItem(item)
+
+        
+
+
