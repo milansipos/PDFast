@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QListWidget, Q
 from pdf_viewer import PDFViewerWindow
 from pdf_item_view import ItemView
 
-class MainScreen(QWidget):
+class EditView(QWidget):
     def __init__(self):
         super().__init__()
 
