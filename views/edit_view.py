@@ -21,14 +21,28 @@ class EditView(QWidget):
         self.pages.setFlow(QListView.Flow.LeftToRight)
         self.pages.setWrapping(True)
         self.pages.setResizeMode(QListView.ResizeMode.Adjust)
-        self.pages.setIconSize(QSize(225, 300))
+        self.pages.setIconSize(QSize(195, 260))
         self.pages.setSpacing(15)        
-        self.pages.setGridSize(QSize(245, 330))
+        self.pages.setGridSize(QSize(245, 300))
 
         self.pages.setDragEnabled(True)
         self.pages.setAcceptDrops(True)
         self.pages.setDropIndicatorShown(True)
         self.pages.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+
+        self.pages.setStyleSheet("""
+            QListWidget::item {
+                border-radius: 8px; /* Smooth corners for the item bounds */
+                padding: 5px;
+            }
+            QListWidget::item:hover {
+                background-color: rgba(0, 0, 0, 30); /* A subtle dark transparent tint */
+            }
+            QListWidget::item:selected {
+                background-color: rgba(0, 120, 215, 60); /* A soft blue tint when clicked */
+                border: 2px solid #0078d7;               /* Windows-style blue border */
+            }
+        """)
 
         self.pages.itemDoubleClicked.connect(self.remove_page)
 
@@ -43,7 +57,7 @@ class EditView(QWidget):
         self.document.load(pdf_path)
 
         for i in range(self.document.pageCount()):
-            image = self.document.render(i, QSize(225, 300))
+            image = self.document.render(i, QSize(195, 260))
             pixmap = QPixmap.fromImage(image)
             icon = QIcon(pixmap)
 
