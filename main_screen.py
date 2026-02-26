@@ -10,21 +10,15 @@ class MainScreen(QWidget):
 
         self.open_pdfs = []
 
-        self.setWindowTitle("PDF Tool Prototype")
+        self.setWindowTitle("PDFast")
         self.resize(600, 450)
 
         self.pdf_list = QListWidget()
         self.load_button = QPushButton("Select PDF File")
-        self.label = QLabel()
-        self.label.setText("asd")
-        self.edit = QLineEdit()
-        self.edit.editingFinished.connect(self.textchange)
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.pdf_list)
         layout.addWidget(self.load_button)
-        layout.addWidget(self.label)
-        layout.addWidget(self.edit)
 
         self.load_button.clicked.connect(self.open_file_dialog)
         self.pdf_list.itemDoubleClicked.connect(self.open_pdf_viewer)
