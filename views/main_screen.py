@@ -1,8 +1,8 @@
 
 from PySide6.QtWidgets import (QWidget, QPushButton, QVBoxLayout, QListWidget, QListWidgetItem, QFileDialog, QLabel, QLineEdit)
-from pdf_viewer import PDFViewerWindow
-from item_view import ItemView
-from edit_view import EditView
+from views.pdf_viewer import PDFViewerWindow
+from views.item_view import ItemView
+from views.edit_view import EditView
 from PySide6.QtCore import Qt
 
 class MainScreen(QWidget):

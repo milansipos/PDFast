@@ -1,6 +1,6 @@
 import sys
 from PySide6.QtWidgets import QApplication
-from main_screen import MainScreen
+from views.main_screen import MainScreen
 
 def main():
 
