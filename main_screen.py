@@ -7,7 +7,6 @@ from edit_view import EditView
 class MainScreen(QWidget):
     def __init__(self):
         super().__init__()
-
         self.open_pdfs = []
 
         self.setWindowTitle("PDFast")
@@ -43,6 +42,3 @@ class MainScreen(QWidget):
         view_window = PDFViewerWindow(pdf_name)
         self.open_pdfs.append(view_window)
         view_window.show()
-
-    def textchange(self):
-        print("text was changed")
