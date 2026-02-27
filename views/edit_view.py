@@ -1,5 +1,5 @@
 
-from PySide6.QtWidgets import (QWidget, QAbstractItemView, QListView, QVBoxLayout, QListWidget, QListWidgetItem, QFileDialog, QPushButton)
+from PySide6.QtWidgets import (QInputDialog, QLineEdit, QWidget, QCheckBox, QAbstractItemView, QListView, QVBoxLayout, QListWidget, QListWidgetItem, QFileDialog, QPushButton)
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QIcon, QPixmap, QTransform
 from PySide6.QtPdf import QPdfDocument
@@ -55,10 +55,12 @@ class EditView(QWidget):
 
         self.saveButton = QPushButton("Save new PDF")
         self.saveButton.clicked.connect(self.export_rearranged_pdf)
+        self.passwordCheckBox = QCheckBox("Lock Document with Password")
 
         layout = QVBoxLayout(self)
         layout.addWidget(self.pages)
         layout.addWidget(self.saveButton)
+        layout.addWidget(self.passwordCheckBox)
 
         self.document = QPdfDocument()
         self.document.load(pdf_path)
@@ -79,6 +81,7 @@ class EditView(QWidget):
             self.pages.addItem(item)
             
     def export_rearranged_pdf(self):
+
         savepath, _ = QFileDialog.getSaveFileName(self, "Save Rearranged PDF", "", "PDF Files (*.pdf)")
 
         if not savepath:
@@ -100,12 +103,19 @@ class EditView(QWidget):
 
             writer.add_page(page)
             
+        if self.passwordCheckBox.isChecked():
+            password, ok = QInputDialog.getText(self, "Protect PDF", "Enter a password for this file:", QLineEdit.EchoMode.Password)
+            if password and ok:
+                writer.encrypt(password)
+            else:
+                return
 
         with open(savepath, "wb") as output_file:
             writer.write(output_file)
 
         print("file saved to " + savepath)
         
+
     def remove_page(self, item):
         row_index = self.pages.row(item)
         self.pages.takeItem(row_index)
