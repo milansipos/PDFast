@@ -1,10 +1,13 @@
 
 from PySide6.QtWidgets import (QWidget, QAbstractItemView, QListView, QVBoxLayout, QListWidget, QListWidgetItem, QFileDialog, QPushButton)
 from PySide6.QtCore import QSize
-from PySide6.QtGui import QIcon, QPixmap
+from PySide6.QtGui import QIcon, QPixmap, QTransform
 from PySide6.QtPdf import QPdfDocument
 from pypdf import PdfReader, PdfWriter
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMenu
+from PySide6.QtGui import QAction
+
 
 class EditView(QWidget):
     def __init__(self, pdf_path):
@@ -29,6 +32,12 @@ class EditView(QWidget):
         self.pages.setAcceptDrops(True)
         self.pages.setDropIndicatorShown(True)
         self.pages.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+
+        # 1. Tell the list to allow custom right-click menus
+        self.pages.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        
+        # 2. Connect the right-click event to a new function we are about to write
+        self.pages.customContextMenuRequested.connect(self.show_context_menu)
 
         self.pages.setStyleSheet("""
             QListWidget::item {
@@ -56,14 +65,20 @@ class EditView(QWidget):
         self.document = QPdfDocument()
         self.document.load(pdf_path)
 
+        self.pixmap = QPixmap
+
         for i in range(self.document.pageCount()):
             image = self.document.render(i, QSize(195, 260))
-            pixmap = QPixmap.fromImage(image)
-            icon = QIcon(pixmap)
+            self.pixmap = QPixmap.fromImage(image)
+            icon = QIcon(self.pixmap)
 
             item = QListWidgetItem(icon, f"{i+1}")
 
-            item.setData(Qt.ItemDataRole.UserRole, i)
+            page_data = {
+                "original_index" : 1,
+                "rotation" : 0
+            }
+            item.setData(Qt.ItemDataRole.UserRole, page_data)
 
             self.pages.addItem(item)
             
@@ -79,7 +94,9 @@ class EditView(QWidget):
 
         for i in range(self.pages.count()):
             item = self.pages.item(i)
-            original_index = item.data(Qt.ItemDataRole.UserRole)
+            page_data = item.data(Qt.ItemDataRole.UserRole)
+            original_index = page_data['original_index']
+            rotation = page_data['rotation']
             writer.add_page(reader.pages[original_index])
 
         with open(savepath, "wb") as output_file:
@@ -90,3 +107,30 @@ class EditView(QWidget):
     def remove_page(self, item):
         row_index = self.pages.row(item)
         self.pages.takeItem(row_index)
+
+    def show_context_menu(self, position):
+        item = self.pages.itemAt(position)
+
+        if not item:
+            return
+        
+        menu = QMenu(self)
+
+        rotate_action = menu.addAction("Rotate 90°")
+        menu.addSeparator()
+        delete_action = menu.addAction("Delete Page ❌")
+
+        global_position = self.pages.mapToGlobal(position)
+
+        selected_action = menu.exec(global_position)
+
+        if selected_action == rotate_action:
+            self.rotate_page(item)
+        elif selected_action == delete_action:
+            self.remove_page(item)
+
+
+    def rotate_page(self, item):
+        transform = QTransform().rotate(90)
+        self.pixmap = self.pixmap.transformed(transform) #type: ignore
+        item.setIcon(QIcon(self.pixmap))
