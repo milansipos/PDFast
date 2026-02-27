@@ -53,8 +53,6 @@ class EditView(QWidget):
             }
         """)
 
-        self.pages.itemDoubleClicked.connect(self.remove_page)
-
         self.saveButton = QPushButton("Save new PDF")
         self.saveButton.clicked.connect(self.export_rearranged_pdf)
 
@@ -96,6 +94,7 @@ class EditView(QWidget):
             original_index = page_data['original_index']
             rotation = page_data['rotation']
             writer.add_page(reader.pages[original_index])
+            
 
         with open(savepath, "wb") as output_file:
             writer.write(output_file)
