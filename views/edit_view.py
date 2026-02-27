@@ -71,7 +71,7 @@ class EditView(QWidget):
             item = QListWidgetItem(icon, f"{i+1}")
 
             page_data = {
-                "original_index" : 1,
+                "original_index" : i,
                 "rotation" : 0
             }
             item.setData(Qt.ItemDataRole.UserRole, page_data)
@@ -90,10 +90,16 @@ class EditView(QWidget):
 
         for i in range(self.pages.count()):
             item = self.pages.item(i)
+
             page_data = item.data(Qt.ItemDataRole.UserRole)
             original_index = page_data['original_index']
             rotation = page_data['rotation']
-            writer.add_page(reader.pages[original_index])
+
+            page = reader.pages[original_index]
+            if rotation != 0:
+                page.rotate(rotation)
+
+            writer.add_page(page)
             
 
         with open(savepath, "wb") as output_file:
