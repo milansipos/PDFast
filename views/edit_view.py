@@ -65,12 +65,10 @@ class EditView(QWidget):
         self.document = QPdfDocument()
         self.document.load(pdf_path)
 
-        self.pixmap = QPixmap
-
         for i in range(self.document.pageCount()):
             image = self.document.render(i, QSize(195, 260))
-            self.pixmap = QPixmap.fromImage(image)
-            icon = QIcon(self.pixmap)
+            pixmap = QPixmap.fromImage(image)
+            icon = QIcon(pixmap)
 
             item = QListWidgetItem(icon, f"{i+1}")
 
@@ -131,6 +129,12 @@ class EditView(QWidget):
 
 
     def rotate_page(self, item):
+        data = item.data(Qt.ItemDataRole.UserRole)
+        data['rotation'] = (data['rotation'] + 90) % 360
+        item.setData(Qt.ItemDataRole.UserRole, data)
+
+        current_pixmap = item.icon().pixmap(QSize(195, 260))
+
         transform = QTransform().rotate(90)
-        self.pixmap = self.pixmap.transformed(transform) #type: ignore
-        item.setIcon(QIcon(self.pixmap))
+        new_pixmap = current_pixmap.transformed(transform)
+        item.setIcon(QIcon(new_pixmap))
