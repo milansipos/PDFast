@@ -6,8 +6,6 @@ from PySide6.QtPdf import QPdfDocument
 from pypdf import PdfReader, PdfWriter
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QMenu
-from PySide6.QtGui import QAction
-
 
 class EditView(QWidget):
     def __init__(self, pdf_path):
@@ -33,10 +31,7 @@ class EditView(QWidget):
         self.pages.setDropIndicatorShown(True)
         self.pages.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
 
-        # 1. Tell the list to allow custom right-click menus
         self.pages.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        
-        # 2. Connect the right-click event to a new function we are about to write
         self.pages.customContextMenuRequested.connect(self.show_context_menu)
 
         self.pages.setStyleSheet("""
@@ -81,7 +76,6 @@ class EditView(QWidget):
             self.pages.addItem(item)
             
     def export_rearranged_pdf(self):
-
         savepath, _ = QFileDialog.getSaveFileName(self, "Save Rearranged PDF", "", "PDF Files (*.pdf)")
 
         if not savepath:
@@ -122,7 +116,6 @@ class EditView(QWidget):
 
     def show_context_menu(self, position):
         item = self.pages.itemAt(position)
-
         if not item:
             return
         
